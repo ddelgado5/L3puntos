@@ -1,0 +1,21 @@
+Servicios a implementar
+
+Ingresar nueva ruta
+Ingresar un domicilario
+Ingresar cliente
+Ingresar origen
+
+Eliminar ruta
+
+Consulta ruta
+
+Editar ruta
+
+
+Recibir pedido
+Buscar el estado del domicilio
+Buscar el chacho (lugar actual) de la ruta
+Confirmar recepcion
+
+Ingresar la ruta
+buscar la ubicación

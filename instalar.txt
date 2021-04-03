@@ -1,0 +1,5 @@
+pip install pysqlite3
+
+
+SQLite Explore and query
+https://github.com/AlexCovizzi/vscode-sqlite

@@ -1,0 +1,23 @@
+### Verificacion simple
+GET http://127.0.0.1:5000/
+
+### verficar con un parametro
+GET http://127.0.0.1:5000/saludo/Edison
+
+### verficar con dos parametro
+GET http://127.0.0.1:5000/saludo2/Edison,volar
+
+### varificar parametro int
+GET http://127.0.0.1:5000/calculardoble/123
+
+### varificar parametro float
+GET http://127.0.0.1:5000/calculardoble/123.3
+
+### varificar parametro String
+GET http://127.0.0.1:5000/calculardoble/123Edi
+
+### varificar argumentos con request
+GET http://127.0.0.1:5000/argumentos/ejemplo?campo1=Python&campo2=Dart&campo3=Java
+
+### Crear basedatos
+GET http://127.0.0.1:5000/crear/superDB,domicilio
