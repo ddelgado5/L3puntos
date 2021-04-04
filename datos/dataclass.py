@@ -34,6 +34,13 @@ class SQL:
             return self.ejecutarUpdate(comandoSQL, datos)
         if tipoComando=='DELETE':
             return self.ejecutarDelete(comandoSQL, datos)
+        if tipoComando=='SELECTBYANY':
+            comandoSQL = comandoSQL.replace("SELECTBYANY", "SELECT")
+            return self.ejecutarByAny(comandoSQL, datos)
+        if tipoComando=='SELECTBYID':
+            comandoSQL = comandoSQL.replace("SELECTBYID", "SELECT")
+            return self.ejecutarById(comandoSQL, datos)
+
 
     def ejecutarSelect(self, comandoSQL):
         try:
@@ -42,7 +49,24 @@ class SQL:
             return respuesta
         except sql.OperationalError as errorSQL:
             return f'Error en el programo de Datos: {errorSQL}'
+
+    def ejecutarByAny(self, comandoSQL, params):
+        try:
+            self.cursor.execute(comandoSQL,(params,))
+            respuesta = self.cursor.fetchone()
+            return respuesta
+        except sql.OperationalError as errorSQL:
+            return f'Error en el programa de Datos: {errorSQL}'
     
+    def ejecutarById(self, comandoSQL, params):
+        try:
+            self.cursor.execute(comandoSQL,(params,))
+            respuesta = self.cursor.fetchone()
+            return respuesta
+        except sql.OperationalError as errorSQL:
+            return f'Error en el programa de Datos: {errorSQL}'
+
+        
     def ejecutarInsert(self, comandoSQL, datos):
         try:
             self.cursor.execute(comandoSQL,datos)
@@ -70,12 +94,27 @@ class SQL:
 
 #===[DataClass]========================================
 
-class Mascota:
+class Productos:
     #constructor
-    def __init__(self, nombre, tipo, edad, responsable, colorPelaje):
+    def __init__(self, nombre, precio, puntos):
         self.nombre = nombre
-        self.tipo = tipo
-        self.edad = edad
-        self.responsable = responsable
-        self.colorPelaje = colorPelaje
+        self.precio = precio
+        self.puntos = puntos
 
+class Personas:
+    #constructor
+    def __init__(self, nombre, precio, puntos):
+        self.nombre = nombre
+        self.documento = documento
+        self.puntos = puntos
+
+
+class Productos:
+    #constructor
+    def __init__(self, nombre, precio, puntos):
+        self.idPersona = idPersona
+        self.idProducto = idProducto
+        self.tipo = tipo
+        self.puntosAntes = puntosAntes
+        self.puntosDespues = puntosDespues
+      
