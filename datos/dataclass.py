@@ -27,7 +27,7 @@ class SQL:
         #(C)insert, (R)select, (U)update, (D)delete
         tipoComando = comandoSQL.split()[0].upper()
         if tipoComando=='SELECT':
-            return self.ejecutarSelect(comandoSQL)
+            return self.ejecutarSelect(comandoSQL, datos)
         if tipoComando=='INSERT':
             return self.ejecutarInsert(comandoSQL, datos)
         if tipoComando=='UPDATE':
@@ -42,10 +42,12 @@ class SQL:
             return self.ejecutarById(comandoSQL, datos)
 
 
-    def ejecutarSelect(self, comandoSQL):
+    def ejecutarSelect(self, comandoSQL, params=None):
         try:
-            self.cursor.execute(comandoSQL)
+            self.cursor.execute(comandoSQL, params)
             respuesta = self.cursor.fetchall()
+            print(comandoSQL)
+
             return respuesta
         except sql.OperationalError as errorSQL:
             return f'Error en el programo de Datos: {errorSQL}'

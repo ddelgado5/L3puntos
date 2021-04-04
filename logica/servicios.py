@@ -30,36 +30,6 @@ sys.path.append("..")  #subir de nivel en el path
 from datos.dataclass import *
 
 _DATABASE = "puntos"
-def crearEstructura(basedatos, tipo):
-    miDB = SQL(basedatos)
-    miDB.crearEstuctura(listaEstructuras[tipo])
-    miDB.cerrarConexion()
-
-def crearEstructuraMascota(basedatos):
-    miDB = SQL(basedatos)
-    miDB.crearEstuctura(listaEstructuras['mascota'])
-    miDB.cerrarConexion()
-
-def inscribirMascota(basedatos):
-    miDB = SQL(basedatos)
-    miDB.ejecutar_dml(listaComandos['insertarMascota'], valores)
-    miDB.cerrarConexion()
-
-def buscarMascota(basedatos, criterio, operador, valor):
-    miDB = SQL(basedatos)
-    comando = listaComandos['seleccionarMascota']
-    comandoCompleto = f'{comando} WHERE {criterio} {operador} ?'
-    data = miDB.ejecutar_dml(comandoCompleto, valor)
-    miDB.cerrarConexion()
-    return data
-
-def listarMascotas(basedatos):
-    miDB = SQL(basedatos)
-    comando = listaComandos['seleccionarMascota']
-    data = miDB.ejecutar_dml(comando)
-    miDB.cerrarConexion()
-    return data
-
 
 def insertarPersona(nombre: str, documento: str, puntos: float, admin:int):
     '''
@@ -97,18 +67,16 @@ def buscarUsuarioByDocumento(documento):
     return user
     
 
-def getProducts():
+def getProducts(params = None):
     miDB = SQL(_DATABASE)
     comando = f'SELECT * FROM productos'
-    producto = miDB.ejecutar_dml(comando)
-    miDB.cerrarConexion()
-    return producto
+    paramsAux = []  
+    if params:
+        comando = f'{comando} WHERE {params[0]} = ?'
+        paramsAux=[params[1]]
+             
+    producto = miDB.ejecutar_dml(comando,paramsAux)
 
-def findProductById(idProd):
-    miDB = SQL(_DATABASE)
-    comando = 'SELECTBYID * FROM productos'
-    com = f'{comando} WHERE id = ?'
-    producto = miDB.ejecutar_dml(com, idProd)
     miDB.cerrarConexion()
     return producto
 

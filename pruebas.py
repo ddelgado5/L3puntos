@@ -1,5 +1,5 @@
 from datos.dataclass import *
-from logica.servicios import insertarPersona, insertarProducto, buscarUsuarioByDocumento, getProducts, findProductById, actualizarPersona
+from logica.servicios import insertarPersona, insertarProducto, buscarUsuarioByDocumento, getProducts, actualizarPersona
 
 
 #import sys
@@ -98,24 +98,28 @@ def getProductsAll():
         print(f'producto: [ {item[0]} ] Nombre:  {item[1]}  precio:  $ {item[2]}  puedes obtener {int(item[3])} puntos ')
 
 def comprar(user):
+    user = buscarUsuarioByDocumento(user[2])
     productoSeleccionado = int(input("seleccione el numero de producto: "))
     # get para consultar un producto hacer servicio consultar por id
-    prod = findProductById(productoSeleccionado)
+    prod = getProducts(['id',productoSeleccionado])
     if(prod == None):
         print("--- Este producto no existe\n")
         print("--- Intentalo de nuevo\n")
         comprar(user)
         return
-    sumaPuntos = user[3] + prod[3]
+
+    sumaPuntos = user[3] + prod[0][3]
     print(f'Total puntos: {type(sumaPuntos)}\n')
     actualpersona = actualizarPersona((user[0], user[1], user[2],sumaPuntos, user[4]))
     print("\nSe cargaron nuevos puntos!\n")
     return
 
 def redimir(user):
+    user = buscarUsuarioByDocumento(user[2])
+
     cuantos= int(input(f'Cuantos puntos vas a redimir? '))
     if(cuantos > user[3]):
-        print('\nLo sentimos... No cuentas con {cuantos} puntos, sigue acumulando!\n')
+        print(f'\nLo sentimos... No cuentas con {cuantos} puntos, sigue acumulando!\n')
         return
     resta = user[3]-cuantos
     actualpersona = actualizarPersona((user[0], user[1], user[2],resta, user[4]))
@@ -123,6 +127,7 @@ def redimir(user):
     return
 
 def verPuntos(user):
+    user = buscarUsuarioByDocumento(user[2])
     print(f'\n Tu acumulado de puntos es: {user[3]} \n')
     pass
 
