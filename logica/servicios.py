@@ -1,30 +1,3 @@
-
-
-listaEstructuras = {}
-listaEstructuras['mascota']='''
-        CREATE TABLE IF NOT EXISTS mascota (
-            nombre      TEXT NOT NULL,
-            tipo        TEXT NOT NULL,
-            edad        INTEGER,
-            responsable TEXT,
-            colorpelaje TEXT);
-        '''
-listaEstructuras['domicilio']='''
-        CREATE TABLE IF NOT EXISTS domicilio (
-            nombre      TEXT NOT NULL,
-            tipo        TEXT NOT NULL,
-            edad        INTEGER,
-            responsable TEXT,
-            colorpelaje TEXT);
-        '''
-
-listaComandos = {}
-listaComandos['insertarMascota'] = ''' 
-        INSERT INTO mascota(nombre, tipo, edad, responsable, colorpelaje)
-        VALUES (?,?,?,?,?) '''
-listaComandos['seleccionarMascota'] = '''  
-        SELECT * FROM mascota  '''  
-
 import sys
 sys.path.append("..")  #subir de nivel en el path
 from datos.dataclass import *
@@ -80,6 +53,15 @@ def getProducts(params = None):
     miDB.cerrarConexion()
     return producto
 
+def transaccionAllByUserService(params):
+    miDB = SQL(_DATABASE)
+    comando = f'SELECTBYID * FROM transacciones'
+    comando = f'{comando} WHERE {params[0]} = ?'
+    transaccion = miDB.ejecutar_dml(comando, params[1])
+    miDB.cerrarConexion()
+    return transaccion
+    
+
 def actualizarPersona(user):
     miDB = SQL(_DATABASE)
     comando = f'UPDATE personas SET puntos = ?'
@@ -88,4 +70,12 @@ def actualizarPersona(user):
     miDB.cerrarConexion()
     return persona
 
+def llenarTablaTransacciones(idPersona: int, idProducto:int, tipo:str, puntosAntes:float, puntosDespues:float):
+    miDB = SQL(_DATABASE)
+    comando = '''
+        INSERT INTO transacciones(idPersona, idProducto, tipo, puntosAntes, puntosDespues) VALUES(?,?,?,?,?)
+    '''
+    x = miDB.ejecutar_dml(comando,[idPersona, idProducto, tipo, puntosAntes, puntosDespues])
+    print("se inserto * PRODUCTO * desde el servicio --- " + x)
+    miDB.cerrarConexion()
     

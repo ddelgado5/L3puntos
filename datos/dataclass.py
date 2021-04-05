@@ -63,7 +63,7 @@ class SQL:
     def ejecutarById(self, comandoSQL, params):
         try:
             self.cursor.execute(comandoSQL,(params,))
-            respuesta = self.cursor.fetchone()
+            respuesta = self.cursor.fetchall()
             return respuesta
         except sql.OperationalError as errorSQL:
             return f'Error en el programa de Datos: {errorSQL}'

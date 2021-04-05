@@ -1,5 +1,5 @@
 from datos.dataclass import *
-from logica.servicios import insertarPersona, insertarProducto, buscarUsuarioByDocumento, getProducts, actualizarPersona
+from logica.servicios import insertarPersona, insertarProducto, buscarUsuarioByDocumento, getProducts, actualizarPersona, llenarTablaTransacciones, transaccionAllByUserService
 
 
 #import sys
@@ -66,13 +66,6 @@ def inicializarBD():
         VALUES (?,?,?,?,?)
     '''
 
-    # x = miDB.ejecutar_dml(comandoDML,['arroz', 50000, 5])
-    # print("esto es pri    --" + x)
-    # y= miDB.ejecutar_dml(comandoDML,['cafe', 20000, 2])
-    # print("SEGUDO ----------- "+ y)
-    # z= miDB.ejecutar_dml(comandoDML,['chocolate', 10000, 1])
-    # print("-----------------------++++++   "+ z)
-
     # insertarPersona("Diana", "1010", 1000, 1)
     insertarPersona("CRIS", "1011", 10, 0)
 
@@ -84,7 +77,7 @@ def inicializarBD():
 
 def inicioApp():
     print(" ***      Bienvenido!     ***  \n")
-    print(" estas en el app de puntos que documento deseas consultar? \n ")
+    print(" Estas en el app de puntos que documento deseas consultar? \n ")
     cedula = input("# de documento:  ")
     user = buscarUsuarioByDocumento(cedula)
     if(user == None):
@@ -95,20 +88,27 @@ def inicioApp():
 def getProductsAll():
     productosAll = getProducts()
     for item in productosAll:
-        print(f'producto: [ {item[0]} ] Nombre:  {item[1]}  precio:  $ {item[2]}  puedes obtener {int(item[3])} puntos ')
+        print(f'Producto: [ {item[0]} ] Nombre:  {item[1]}  Precio:  $ {item[2]}  puedes obtener {int(item[3])} puntos ')
+
+def getTransaccionAll(user):
+    transaccionAllByUser = transaccionAllByUserService(('idPersona',user[0]))
+    print("|---------------------------------------------- Historial ----------------------------------------------|\n")
+    for item in transaccionAllByUser:
+        print(f' Codigo persona: [ {item[1]} ] Codigo Producto: [ {item[2]} ] Accion: {item[3]} Puntos anteriores: {item[4]} Puntos actuales {item[5]}')
 
 def comprar(user):
     user = buscarUsuarioByDocumento(user[2])
     productoSeleccionado = int(input("seleccione el numero de producto: "))
-    # get para consultar un producto hacer servicio consultar por id
+    
     prod = getProducts(['id',productoSeleccionado])
     if(prod == None):
         print("--- Este producto no existe\n")
         print("--- Intentalo de nuevo\n")
         comprar(user)
         return
-
+    
     sumaPuntos = user[3] + prod[0][3]
+    transaccion = llenarTablaTransacciones(user[0], prod[0][0], 'compra', user[3], sumaPuntos)
     print(f'Total puntos: {type(sumaPuntos)}\n')
     actualpersona = actualizarPersona((user[0], user[1], user[2],sumaPuntos, user[4]))
     print("\nSe cargaron nuevos puntos!\n")
@@ -122,6 +122,7 @@ def redimir(user):
         print(f'\nLo sentimos... No cuentas con {cuantos} puntos, sigue acumulando!\n')
         return
     resta = user[3]-cuantos
+    transaccion = llenarTablaTransacciones(user[0], None, 'redimido', user[3], resta)
     actualpersona = actualizarPersona((user[0], user[1], user[2],resta, user[4]))
     print(f'\n Ahora tienes {resta} puntos! \n')
     return
@@ -133,14 +134,15 @@ def verPuntos(user):
 
 def menu(user):
     print("\n|******************************* PUNTOS *************************************************************|\n")
-    print("que deseas hacer?\n")
-    print("[ 0 ] comprar: ")
-    print("[ 1 ] redimir: ")
-    print("[ 2 ] ver mis puntos: ")
-    print("[ 3 ] ver listado de productos: ")
-    print("[ 4 ] salir: \n")
+    print("Que deseas hacer?\n")
+    print("[ 0 ] Comprar: ")
+    print("[ 1 ] Redimir: ")
+    print("[ 2 ] Ver mis puntos: ")
+    print("[ 3 ] Ver listado de productos: ")
+    print("[ 4 ] Ver historial de movimientos: ")
+    print("[ 5 ] Salir: \n")
 
-    opcion = input("elige una opcion: ")
+    opcion = input("Elige una opcion: ")
     if(opcion == "0"):
         comprar(user)
         menu(user)
@@ -158,13 +160,18 @@ def menu(user):
         getProductsAll()
         menu(user)
         return
-    if(opcion == "4"):
+    if(opcion == "4"): #historial 
+        print("\n|-------------------------------------------------------------------------------------------|\n")
+        getTransaccionAll(user)
+        menu(user)
+        return
+    if(opcion == "5"):
         print("\n Adios! \n")
         exit()
         return
     else:
         print("------------------------------------")
-        print("\nopcion no valida \n")
+        print("\nOpcion no valida \n")
         print("------------------------------------")
         menu(user)
 
